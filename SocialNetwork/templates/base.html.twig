@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>{% block title %}Editorial by HTML5 UP{% endblock %}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
+    {% endblock %}
+</head>
+<body class="is-preload">
+    {% block body %}
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Main -->
+        <div id="main">
+            <div class="inner">
+                {% block content %}
+                    {% block header %}
+                        {% include 'partials/header.html.twig' %}
+                    {% endblock %}
+                {% endblock %}
+            </div>
+        </div>
+
+
+        {% include 'partials/sidebar.html.twig' %}
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+    {% endblock %}
+</body>
+</html>
