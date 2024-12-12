@@ -2,13 +2,14 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
-                <br><h1>New Content</h1>
+    {% for post in posts %}
+        {{ include('post/_post.html.twig') }}
+    {% endfor %}
 
-                {% for post in posts %}
-                    {{ include('post/_post.html.twig') }}
-                {% endfor %}
+    {% if app.user %}
+        {% include 'partials/_new_post_button.html.twig' %}
+    {% endif %}
 
-            {% include 'partials/_new_post_button.html.twig' %}
-            {% include 'post/index.html.twig' %}
+    {% include 'post/index.html.twig' %}
 
 {% endblock %}

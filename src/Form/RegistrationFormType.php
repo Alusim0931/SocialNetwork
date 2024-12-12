@@ -58,7 +58,9 @@ class RegistrationFormType extends AbstractType
                 'label' => 'Birthdate',
             ])
 
-            ->add('bio', TextareaType::class)
+            ->add('bio', TextareaType::class, [
+                'required' => false,
+            ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [

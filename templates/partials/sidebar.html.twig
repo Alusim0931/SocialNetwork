@@ -5,9 +5,22 @@
         <!-- Search -->
         <section id="search" class="alt">
             <form method="post" action="#">
-                <img src="logo.png" class="sidebar-logo" alt="Logo">
+                <!-- Envolver la imagen del logo con un enlace -->
+                <a href="{{ path('app_inicio') }}">
+                    <img src="{{ asset('logo.png') }}" class="sidebar-logo" alt="Logo">
+                </a>
             </form>
         </section>
+
+        <!-- Información del usuario -->
+        {% if app.user %}
+            <section id="user-info">
+                <a href="{{ path('app_profile') }}" class="user-profile">
+                    <img src="{{ asset('uploads/' ~ app.user.userImage) }}" alt="Profile Picture" class="profile-image">
+                    <p class="username">{{ app.user.username }}</p>
+                </a>
+            </section>
+        {% endif %}
 
         <!-- Menu -->
         <nav id="menu">
@@ -19,23 +32,23 @@
                 {% if app.user %}
                     <li><a href="{{ path('app_inicio') }}">Home</a></li>
                     <li><a href="{{ path('explore') }}">Explore</a></li>
-                    <li><a href="{{ path('profile') }}">Profile</a></li>
+                    <li><a href="{{ path('app_profile') }}">Profile</a></li>
                     <li><a href="{{ path('chats') }}">Chats</a></li>
                     <li><a href="#">Notification</a></li>
                     <li><a href="#">Report an error</a></li>
 
                     {% if is_granted('ROLE_CHEF') %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_page') }}">Crear Clases</a>
+                            <a class="nav-link" href="{{ path('app_inicio') }}">Crear Clases</a>
                         </li>
                     {% endif %}
 
                     {% if is_granted('ROLE_PREMIUM') %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_page') }}">Funciones Premium</a>
+                            <a class="nav-link" href="{{ path('app_inicio') }}">Funciones Premium</a>
                         </li>
                     {% endif %}
-                    <li><a href="#">Settings</a></li>
+                    <li><a href="{{ path('app_settings') }}">Settings</a></li>
 
                     {# Botón de logout solo si el usuario está logueado #}
                     <li><a href="{{ path('logout') }}" class="button">Logout</a></li>
@@ -44,7 +57,6 @@
                     <li><a href="{{ path('login') }}">Login</a></li>
                     <li><a href="{{ path('app_register') }}">Register</a></li>
                 {% endif %}
-
             </ul>
         </nav>
 

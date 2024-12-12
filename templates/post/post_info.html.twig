@@ -11,15 +11,7 @@
         {{ include('post/_comment.html.twig') }}
     {% endfor %}
 
-    <button type="submit" class="btn btn-primary comment-btn">Comment</button>
+    <button type="submit" class="button big comment-btn">Comment</button>
+    {% include 'post/comment-modal.html.twig' %}
 
-    <div id="comment-form" class="visibility-none">
-        {{ form_start(commentForm) }}
-        {{ form_row(commentForm.content) }}
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Create</button>
-            {{ form_end(commentForm) }}
-        </div>
-    </div>
 {% endblock %}

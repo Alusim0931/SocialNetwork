@@ -1,6 +1,10 @@
 <!-- Header -->
 <header id="header">
-    <h2><strong>{{ page_title }}</strong></h2>
+    {% if app.user %}
+        <h2><strong>{{ page_title }}</strong></h2>
+    {% else %}
+        <h1><strong>Preview</strong></h1>
+    {% endif %}
     <ul class="icons">
         <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
         <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>

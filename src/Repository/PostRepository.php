@@ -21,6 +21,16 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
+    public function findByHashtag(string $hashtag): array
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.hashtags', 'h')
+            ->where('h.name LIKE :hashtag')
+            ->setParameter('hashtag', '%' . $hashtag . '%')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Post[] Returns an array of Post objects
 //     */

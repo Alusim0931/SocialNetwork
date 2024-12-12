@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+        }
+        .example-wrapper code {
+            background: #F5F5F5;
+            padding: 2px 6px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .rounded-pill {
+            border-radius: 50rem;
+        }
+        .btn-lg {
+            font-size: 1.25rem;
+        }
+    </style>
+
+    <div class="example-wrapper">
+        <h1 class="text-center mb-4">Settings</h1>
+
+        <!-- Formulario de cambio de contraseña -->
+        <div class="card mb-4">
+            <div class="card-header bg-gradient-primary text-white">
+                <h5>Change Password</h5>
+            </div>
+            <div class="card-body">
+                {{ form_start(changePasswordForm) }}
+
+                <div class="mb-3">
+                    {{ form_label(changePasswordForm.current_password, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(changePasswordForm.current_password, {'attr': {'class': 'form-control rounded-pill'}}) }}
+                    {{ form_errors(changePasswordForm.current_password) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(changePasswordForm.new_password, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(changePasswordForm.new_password, {'attr': {'class': 'form-control rounded-pill'}}) }}
+                    {{ form_errors(changePasswordForm.new_password) }}
+                </div>
+
+                <div class="d-grid">
+                    {{ form_widget(changePasswordForm.change, {'attr': {'class': 'button-settings'}}) }}
+                </div>
+
+                {{ form_end(changePasswordForm) }}
+            </div>
+        </div>
+
+        <!-- Mostrar mensajes de éxito o error -->
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+
+        <!-- Formulario de borrado de cuenta -->
+        <div class="card mb-4">
+            <div class="card-header bg-gradient-danger text-white">
+                <h5>Delete Account</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">Deleting your account is permanent and cannot be undone. All your data will be lost.</p>
+                {{ form_start(deleteAccountForm) }}
+
+                <div class="mb-3">
+                    {{ form_widget(deleteAccountForm.confirm, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(deleteAccountForm.confirm, null, {'label_attr': {'class': 'form-check-label fw-bold'}}) }}
+                    {% if form_errors(deleteAccountForm.confirm) %}
+                        <div class="text-danger">
+                            {{ form_errors(deleteAccountForm.confirm) }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-grid">
+                    {{ form_widget(deleteAccountForm.delete, {'attr': {'class': 'button-settings-delete'}}) }}
+                </div>
+
+                {{ form_end(deleteAccountForm) }}
+            </div>
+        </div>
+
+        <!-- Formulario de configuración de notificaciones -->
+        <div class="card mb-4">
+            <div class="card-header bg-gradient-info text-white">
+                <h5>Notification Settings</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">Manage your notification preferences below.</p>
+                {{ form_start(notificationSettingsForm) }}
+
+                <div class="mb-3">
+                    {{ form_widget(notificationSettingsForm.email_notifications, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(notificationSettingsForm.email_notifications, null, {'label_attr': {'class': 'form-check-label fw-bold'}}) }}
+                    {{ form_errors(notificationSettingsForm.email_notifications) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_widget(notificationSettingsForm.app_notifications, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(notificationSettingsForm.app_notifications, null, {'label_attr': {'class': 'form-check-label fw-bold'}}) }}
+                    {{ form_errors(notificationSettingsForm.app_notifications) }}
+                </div>
+
+                <div class="d-grid">
+                    {{ form_widget(notificationSettingsForm.save, {'attr': {'class': 'button-settings-save'}}) }}
+                </div>
+
+                {{ form_end(notificationSettingsForm) }}
+            </div>
+        </div>
+
+        <!-- Botón para regresar a la página principal -->
+        <div class="text-center mt-4">
+            <a href="{{ path('app_inicio') }}" class="button-settings">
+                Return to Main Page
+            </a>
+        </div>
+    </div>
+{% endblock %}

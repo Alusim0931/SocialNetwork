@@ -11,59 +11,28 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
-    {
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        EntityManagerInterface $entityManager,
+        UserAuthenticatorInterface $userAuthenticator,
+        //Inyector del formulario de login, maneja el inicio de sesión automático
+        #[Autowire(service: 'security.authenticator.form_login.main')] $formLoginAuthenticator
+    ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Asigna el valor del checkbox 'isStudent' a la entidad como booleano
-            $isStudent = $form->get('isStudent')->getData(); // Será true o false
-            $user->setIsStudent($isStudent); // Se guarda el valor true o false
-            $isChef = $form->get('isChef')->getData();
-            $user->setIsChef($isChef);
-
-            $proofOfChefTitleFile = $form->get('proofOfChefTitle')->getData();
-            if ($proofOfChefTitleFile) {
-                $newFilename = uniqid().'.'.$proofOfChefTitleFile->guessExtension();
-
-                try {
-                    $proofOfChefTitleFile->move(
-                        $this->getParameter('uploads_directory'), // Necesitas configurar este parámetro
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // Maneja la excepción si la subida falla
-                }
-
-                // Establece el nombre del archivo en la entidad `User`
-                $user->setProofOfChefTitle($newFilename);
-            }
-
-            $userImage = $form->get('userImage')->getData();
-            if ($userImage) {
-                $newFilename = uniqid().'.'.$userImage->guessExtension();
-
-                try {
-                    $userImage->move(
-                        $this->getParameter('uploads_directory'), // Necesitas configurar este parámetro
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // Maneja la excepción si la subida falla
-                }
-
-                // Establece el nombre del archivo en la entidad `User`
-                $user->setUserImage($newFilename);
-            }
-
-            // Cifra la contraseña
+            // Lógica de registro
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
@@ -71,14 +40,16 @@ class RegistrationController extends AbstractController
                 )
             );
 
-            // Persiste la entidad en la base de datos
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_inicio');
+            // Autenticar automáticamente
+            return $userAuthenticator->authenticateUser(
+                $user,
+                $formLoginAuthenticator,
+                $request
+            );
         }
-
-
 
         return $this->render('registration/register.html.twig', [
             'page_title' => 'Registro',

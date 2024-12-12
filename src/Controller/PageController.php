@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Hashtag;
 use App\Entity\Post;
 use App\Form\PostFormType;
 use App\Repository\PostRepository;
@@ -46,6 +47,19 @@ class PageController extends AbstractController
             }
 
             $post = $form->getData();
+            $newHashtags = $form->get('hashtags')->getData();
+            if ($newHashtags) {
+                $hashtagNames = array_map('trim', explode(',', $newHashtags));
+                foreach ($hashtagNames as $name) {
+                    $hashtag = $this->manager->getRepository(Hashtag::class)->findOneBy(['name' => $name]);
+                    if (!$hashtag) {
+                        $hashtag = new Hashtag();
+                        $hashtag->setName($name);
+                        $this->manager->persist($hashtag);
+                    }
+                    $post->addHashtag($hashtag);
+                }
+            }
 
             $image = $form->get('img')->getData();
             if ($image) {
@@ -70,21 +84,16 @@ class PageController extends AbstractController
     }
 
     #[Route('/explore', name: 'explore')]
-    public function explore(): Response
+    public function explore(Request $request): Response
     {
+        $search = $request->query->get('search');
+        $posts = $search ? $this->postRepository->findByHashtag($search) : $this->postRepository->findAll();
+
         return $this->render('page/explore.html.twig', [
             'page_title' => 'Explore',
+            'posts' => $posts,
         ]);
     }
-
-    #[Route('/profile', name: 'profile')]
-    public function profile(): Response
-    {
-        return $this->render('page/profile.html.twig', [
-            'page_title' => 'Profile',
-        ]);
-    }
-
     #[Route('/chats', name: 'chats')]
     public function chats(): Response
     {
@@ -94,7 +103,7 @@ class PageController extends AbstractController
     }
 
     #[Route('/like/{id}', name: 'post_like')]
-    public function like($id) : Response
+    public function like($id): Response
     {
         $post = $this->postRepository->find($id);
         if ($post) {
@@ -102,6 +111,6 @@ class PageController extends AbstractController
             $this->manager->flush();
         }
 
-        return $this->redirectToRoute('app_inicio');
+        return $this->json(['likes' => $post->getNumLikes()]);
     }
 }

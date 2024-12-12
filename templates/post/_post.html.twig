@@ -1,32 +1,59 @@
-<section id="banner" class="post-card" data-post-id="{{ post.id }}">
+<section id="banner">
+
     <div class="content">
-        <header>
-            <p><strong>{{ post.user.name }}</strong> <span class="text-lowercase">@{{ post.user.username }}</span> · {{ post.datetime|date('Y-m-d H:i') }}</p>
-            <h2>{{ post.title }}</h2>
-            <p>Hashtags</p>
-        </header>
-        <p>{{ post.content }}</p>
-        <ul class="actions">
-            <li><a href="#" class="button big">Let's cook!</a></li>
-        </ul>
+        <div class="post-card" data-post-id="{{ post.id }}">
+            <header>
+                <div style="display: flex; justify-content: space-between;">
+                    <p><strong>{{ post.user.name }}</strong> <span class="text-lowercase">@{{ post.user.username }}</span> · {{ post.datetime|date('Y-m-d H:i') }}</p>
+                </div>
+                <h2>{{ post.title }}</h2>
+                <p class="text-lowercase">
+                    {% for hashtag in post.hashtags %}
+                        #{{ hashtag.name }}{% if not loop.last %} {% endif %}
+                    {% endfor %}
+                </p>
+            </header>
+            <p>{{ post.content }}</p>
+            <ul class="actions">
+                <li><a href="#" class="button big">Let's cook!</a></li>
+            </ul>
+        </div>
 
         <p>
             Likes:
             {% if app.user %}
                 <a href="{{ path('post_like', { 'id': post.id }) }}" class="like-btn" data-post-id="{{ post.id }}">
-                    <i class="bi bi-heart{% if post.isLikedByUser(app.user) %}-fill{% endif %}"></i> {{ post.numLikes }}
+                    <i class="bi bi-heart{% if post.isLikedByUser(app.user) %}-fill{% endif %}"></i> <span>{{ post.numLikes }}</span>
                 </a>
             {% else %}
                 <span class="like-btn" data-post-id="{{ post.id }}">
-                    <i class="bi bi-heart"></i> {{ post.numLikes }}
+                    <i class="bi bi-heart"></i> <span>{{ post.numLikes }}</span>
                 </span>
             {% endif %}
             Views: <i class="bi bi-eye"></i> {{ post.numViews }}
         </p>
     </div>
-    <span class="image object">
+
+    <span class="image object post-img">
          {% if post.img %}
              <img src="{{ asset('uploads/images/' ~ post.img) }}" alt="{{ post.title }}">
          {% endif %}
     </span>
+
+    {% if app.user %}
+        <div>
+            <button class="menu-btn icn-btn" id="btn"><i class="bi bi-three-dots-vertical"></i></button>
+            <div class="dropdown" id="dropdown">
+                <a href="#">
+                    <i class="bi bi-pencil"></i>
+                    Edit
+                </a>
+                <a href="#">
+                    <i class="bi bi-trash"></i>
+                    Delete
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
 </section>

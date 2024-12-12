@@ -41,12 +41,16 @@ class Post
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'post')]
     private Collection $comments;
 
+    #[ORM\ManyToMany(targetEntity: Hashtag::class, mappedBy: 'posts')]
+    private Collection $hashtags;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
         $this->datetime = new DateTime();
         $this->numLikes = 0;
         $this->numViews = 0;
+        $this->hashtags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -187,5 +191,32 @@ class Post
     public function addView(): void
     {
         $this->numViews++;
+    }
+
+    /**
+     * @return Collection<int, Hashtag>
+     */
+    public function getHashtags(): Collection
+    {
+        return $this->hashtags;
+    }
+
+    public function addHashtag(Hashtag $hashtag): static
+    {
+        if (!$this->hashtags->contains($hashtag)) {
+            $this->hashtags->add($hashtag);
+            $hashtag->addPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHashtag(Hashtag $hashtag): static
+    {
+        if ($this->hashtags->removeElement($hashtag)) {
+            $hashtag->removePost($this);
+        }
+
+        return $this;
     }
 }
